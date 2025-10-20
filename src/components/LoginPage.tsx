@@ -11,8 +11,8 @@ type LoginPageProps = {
 };
 
 export function LoginPage({ onLogin }: LoginPageProps) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('demo@brinc.io');
+  const [password, setPassword] = useState('demo123');
   const [showError, setShowError] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {

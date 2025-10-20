@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Button } from './ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Download, 
+import {
+  ChevronLeft,
+  ChevronRight,
+  Download,
   Presentation,
   FileText,
   X,
@@ -121,9 +121,37 @@ export function PreviewDialog({ open, onOpenChange, companyName }: PreviewDialog
     }
   };
 
+  const handleDownloadPdf = () => {
+    // This function assumes html2pdf.js is loaded, e.g., via a <script> tag in index.html
+    // <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    const element = document.getElementById('pdf-content-to-download');
+    const html2pdf = (window as any).html2pdf;
+
+    if (!element) {
+      console.error('PDF content element not found.');
+      alert('Could not find content to generate PDF.');
+      return;
+    }
+
+    if (!html2pdf) {
+      console.error('html2pdf.js is not loaded.');
+      alert('PDF generation library is not available.');
+      return;
+    }
+
+    const opt = {
+      margin: 0.5,
+      filename: `${companyName}-proposal.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    html2pdf().from(element).set(opt).save();
+  };
+
   const slide = mockSlides[currentSlide];
 
-  // Render as a portal-like fullscreen overlay instead of inside Dialog
   if (!open) return null;
 
   return (
@@ -131,6 +159,10 @@ export function PreviewDialog({ open, onOpenChange, companyName }: PreviewDialog
       {/* Custom Header */}
       <div className="h-16 border-b border-border bg-white flex items-center justify-between px-6 shrink-0">
         <div className="flex items-center gap-4">
+          <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>
+            <ChevronLeft className="mr-2 h-4 w-4" />
+            Back
+          </Button>
           <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
             <span className="text-primary-foreground text-sm">B</span>
           </div>
@@ -143,7 +175,7 @@ export function PreviewDialog({ open, onOpenChange, companyName }: PreviewDialog
             </p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={toggleFullscreen}>
             <Maximize2 className="mr-2 h-4 w-4" />
@@ -153,7 +185,7 @@ export function PreviewDialog({ open, onOpenChange, companyName }: PreviewDialog
             <ExternalLink className="mr-2 h-4 w-4" />
             Open in Drive
           </Button>
-          <Button>
+          <Button onClick={handleDownloadPdf}>
             <Download className="mr-2 h-4 w-4" />
             Download PDF
           </Button>
@@ -327,11 +359,10 @@ export function PreviewDialog({ open, onOpenChange, companyName }: PreviewDialog
                 <button
                   key={s.id}
                   onClick={() => setCurrentSlide(index)}
-                  className={`shrink-0 w-40 h-full rounded-lg border-2 transition-all flex flex-col items-center justify-center gap-2 p-3 ${
-                    currentSlide === index
-                      ? 'border-primary bg-primary/5 shadow-md'
-                      : 'border-border bg-muted/30 hover:border-primary/50 hover:bg-muted/50'
-                  }`}
+                  className={`shrink-0 w-40 h-full rounded-lg border-2 transition-all flex flex-col items-center justify-center gap-2 p-3 ${currentSlide === index
+                    ? 'border-primary bg-primary/5 shadow-md'
+                    : 'border-border bg-muted/30 hover:border-primary/50 hover:bg-muted/50'
+                    }`}
                 >
                   <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
                     <span className="text-primary text-sm font-semibold">{index + 1}</span>
@@ -348,7 +379,7 @@ export function PreviewDialog({ open, onOpenChange, companyName }: PreviewDialog
         {/* PDF Preview */}
         <TabsContent value="pdf" className="flex-1 m-0 overflow-auto bg-muted/30">
           <div className="min-h-full flex items-start justify-center p-8">
-            <div className="w-full max-w-4xl bg-white shadow-2xl">
+            <div id="pdf-content-to-download" className="w-full max-w-4xl bg-white shadow-2xl">
               {/* PDF Header */}
               <div className="bg-gradient-to-br from-primary via-primary to-primary/90 text-primary-foreground p-16">
                 <div className="flex items-start gap-6 mb-8">
@@ -383,13 +414,13 @@ export function PreviewDialog({ open, onOpenChange, companyName }: PreviewDialog
                     Executive Summary
                   </h2>
                   <p className="text-foreground text-lg leading-relaxed">
-                    This proposal outlines a strategic partnership between Brinc and {companyName}. 
-                    Our collaboration will leverage Brinc's global acceleration expertise, extensive mentor 
+                    This proposal outlines a strategic partnership between Brinc and {companyName}.
+                    Our collaboration will leverage Brinc's global acceleration expertise, extensive mentor
                     network, and proven track record to drive innovation and create measurable business value.
                   </p>
                   <p className="text-foreground text-lg leading-relaxed">
-                    Through this partnership, {companyName} will gain access to cutting-edge startup 
-                    ecosystems, corporate innovation methodologies, and a portfolio of over 500 high-growth 
+                    Through this partnership, {companyName} will gain access to cutting-edge startup
+                    ecosystems, corporate innovation methodologies, and a portfolio of over 500 high-growth
                     companies across six continents.
                   </p>
                 </section>
@@ -400,8 +431,8 @@ export function PreviewDialog({ open, onOpenChange, companyName }: PreviewDialog
                     Market Opportunity
                   </h2>
                   <p className="text-foreground text-lg leading-relaxed">
-                    The global startup ecosystem continues to expand rapidly, with increasing demand for 
-                    specialized acceleration programs and corporate innovation partnerships. {companyName} is 
+                    The global startup ecosystem continues to expand rapidly, with increasing demand for
+                    specialized acceleration programs and corporate innovation partnerships. {companyName} is
                     uniquely positioned to capitalize on these trends through strategic collaboration with Brinc.
                   </p>
                   <div className="grid grid-cols-3 gap-6 mt-6">
@@ -433,7 +464,7 @@ export function PreviewDialog({ open, onOpenChange, companyName }: PreviewDialog
                       <div>
                         <h3 className="text-foreground text-xl font-semibold mb-2">Strategic Collaboration</h3>
                         <p className="text-muted-foreground leading-relaxed">
-                          Joint initiatives leveraging both organizations' strengths to accelerate 
+                          Joint initiatives leveraging both organizations' strengths to accelerate
                           startup growth and drive corporate innovation outcomes.
                         </p>
                       </div>
@@ -445,7 +476,7 @@ export function PreviewDialog({ open, onOpenChange, companyName }: PreviewDialog
                       <div>
                         <h3 className="text-foreground text-xl font-semibold mb-2">Go-to-Market Synergies</h3>
                         <p className="text-muted-foreground leading-relaxed">
-                          Co-marketing opportunities, shared brand visibility, and joint thought 
+                          Co-marketing opportunities, shared brand visibility, and joint thought
                           leadership to amplify market presence and credibility.
                         </p>
                       </div>
@@ -457,7 +488,7 @@ export function PreviewDialog({ open, onOpenChange, companyName }: PreviewDialog
                       <div>
                         <h3 className="text-foreground text-xl font-semibold mb-2">Resource Sharing</h3>
                         <p className="text-muted-foreground leading-relaxed">
-                          Access to mentors, investors, corporate partners, and operational expertise 
+                          Access to mentors, investors, corporate partners, and operational expertise
                           to maximize program effectiveness and startup success rates.
                         </p>
                       </div>
@@ -469,7 +500,7 @@ export function PreviewDialog({ open, onOpenChange, companyName }: PreviewDialog
                       <div>
                         <h3 className="text-foreground text-xl font-semibold mb-2">Innovation Pipeline</h3>
                         <p className="text-muted-foreground leading-relaxed">
-                          Continuous flow of innovative startups and technologies aligned with 
+                          Continuous flow of innovative startups and technologies aligned with
                           {companyName}'s strategic priorities and business objectives.
                         </p>
                       </div>
@@ -530,8 +561,8 @@ export function PreviewDialog({ open, onOpenChange, companyName }: PreviewDialog
                   <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-8 border-2 border-primary/20">
                     <h3 className="text-foreground text-xl font-semibold mb-4">We're Ready to Move Forward</h3>
                     <p className="text-foreground leading-relaxed mb-6">
-                      We propose scheduling a follow-up meeting to discuss this proposal in detail, 
-                      align on partnership terms, and establish a clear implementation timeline. 
+                      We propose scheduling a follow-up meeting to discuss this proposal in detail,
+                      align on partnership terms, and establish a clear implementation timeline.
                       Our team is prepared to begin immediately upon agreement.
                     </p>
                     <div className="flex items-center gap-4 pt-4 border-t border-primary/20">
