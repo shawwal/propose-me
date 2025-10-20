@@ -34,11 +34,12 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "*",
         "cmdk": "^1.1.1",
+        "date-fns": "^3.6.0",
         "embla-carousel-react": "^8.6.0",
         "input-otp": "^1.4.2",
         "lucide-react": "^0.487.0",
         "next-themes": "^0.4.6",
-        "react": "^19.2.0",
+        "react": "^18.3.1",
         "react-day-picker": "^8.10.1",
         "react-dom": "^18.3.1",
         "react-hook-form": "^7.55.0",
@@ -61,8 +62,12 @@
         "build": "vite build",
         "preview": "vite preview"
     },
-    "resolutions": {
-        "react":  "^19.2.0",
-        "react-dom": "^18.3.1"
+    "pnpm": {
+        "overrides": {
+            "react": "^18.3.1",
+            "react-dom": "^18.3.1",
+            "date-fns": "^3.6.0"
+        }
     }
 }
+
