@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LoginPage } from './components/LoginPage';
 import { DashboardPage } from './components/DashboardPage';
 import { SettingsPage } from './components/SettingsPage';
@@ -8,6 +8,8 @@ import { SuccessScreen } from './components/SuccessScreen';
 import { PreviewDialog } from './components/PreviewDialog';
 import { Button } from './components/ui/button';
 import { ArrowLeft, LogOut } from 'lucide-react';
+import Footer from './components/Footer';
+import { Header } from './components/Header';
 
 export type FormData = {
   companyName: string;
@@ -32,10 +34,24 @@ export default function App() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewCompany, setPreviewCompany] = useState<string>('');
 
+  useEffect(() => {
+    const storedAuth = localStorage.getItem('isAuthenticated');
+    const storedEmail = localStorage.getItem('userEmail');
+
+    if (storedAuth === 'true' && storedEmail) {
+      setIsAuthenticated(true);
+      setUserEmail(storedEmail);
+      setAppState('dashboard');
+    }
+  }, []);
+
   const handleLogin = (email: string, _password: string) => {
     setUserEmail(email);
     setIsAuthenticated(true);
     setAppState('dashboard');
+    // Save to localStorage
+    localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem('userEmail', email);
   };
 
   const handleLogout = () => {
@@ -46,6 +62,9 @@ export default function App() {
     setPreviewOpen(false);
     setPreviewCompany('');
     setAppState('login');
+    // Clear storage
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userEmail');
   };
 
   const handleCreateNew = () => {
@@ -126,6 +145,7 @@ export default function App() {
   // Proposal Creation Flow (form, generating, success)
   return (
     <div className="min-h-screen bg-background">
+      {/* Main Content */}
       {/* Header */}
       <header className="border-b border-border bg-white sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-6 py-5">
@@ -162,7 +182,6 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-12">
         {appState === 'form' && (
           <ProposalForm onSubmit={handleFormSubmit} />
@@ -176,15 +195,7 @@ export default function App() {
           />
         )}
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-border mt-20">
-        <div className="max-w-4xl mx-auto px-6 py-6">
-          <p className="text-muted-foreground text-sm text-center">
-            © 2025 Brinc. Internal Tool - For authorized use only.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
