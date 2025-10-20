@@ -23,6 +23,8 @@ export type FormData = {
 type AppState = 'login' | 'dashboard' | 'settings' | 'form' | 'generating' | 'success';
 
 export default function App() {
+  // Session persistence - will persist during the browser session
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [appState, setAppState] = useState<AppState>('login');
   const [userEmail, setUserEmail] = useState<string>('');
   const [formData, setFormData] = useState<FormData | null>(null);
@@ -32,13 +34,17 @@ export default function App() {
 
   const handleLogin = (email: string, _password: string) => {
     setUserEmail(email);
+    setIsAuthenticated(true);
     setAppState('dashboard');
   };
 
   const handleLogout = () => {
+    setIsAuthenticated(false);
     setUserEmail('');
     setFormData(null);
     setDriveUrl('');
+    setPreviewOpen(false);
+    setPreviewCompany('');
     setAppState('login');
   };
 
@@ -82,8 +88,8 @@ export default function App() {
     setPreviewOpen(true);
   };
 
-  // Login Page
-  if (appState === 'login') {
+  // Login Page - only show if not authenticated
+  if (!isAuthenticated || appState === 'login') {
     return <LoginPage onLogin={handleLogin} />;
   }
 

@@ -122,8 +122,6 @@ export function PreviewDialog({ open, onOpenChange, companyName }: PreviewDialog
   };
 
   const handleDownloadPdf = () => {
-    // This function assumes html2pdf.js is loaded, e.g., via a <script> tag in index.html
-    // <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     const element = document.getElementById('pdf-content-to-download');
     const html2pdf = (window as any).html2pdf;
 
