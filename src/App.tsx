@@ -128,7 +128,7 @@ export default function App() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-white sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-6 py-5">
+        <div className="max-w-7xl mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
@@ -163,7 +163,7 @@ export default function App() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-6 py-12">
+      <main className="max-w-7xl mx-auto px-6 py-12">
         {appState === 'form' && (
           <ProposalForm onSubmit={handleFormSubmit} />
         )}
